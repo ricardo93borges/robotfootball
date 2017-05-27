@@ -6,7 +6,6 @@ os:
 
 compiler:
   - gcc
-  - clang
 
 addons:
   apt:
@@ -18,4 +17,4 @@ addons:
 
 script:
   - cmake .
-  - make all
+  - make
