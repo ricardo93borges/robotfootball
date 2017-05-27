@@ -14,7 +14,9 @@ addons:
         - ubuntu-toolchain-r-test
       packages:
         - gcc-5
-
+        - clang-3.7
+        - g++-5
+        
 script:
   - cmake .
   - make
