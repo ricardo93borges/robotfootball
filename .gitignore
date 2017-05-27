@@ -19,6 +19,8 @@
 *.*#
 core
 !core/
+!lib-Linux/
+!lib-Mac/
 tags
 .DS_Store
 .directory
