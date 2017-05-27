@@ -1,6 +1,7 @@
 language: c
 
 os:
+    - linux
     - osx
 
 compiler:
@@ -16,7 +17,9 @@ addons:
         - clang-3.7
         - g++-5
         - cmake
-        
+        - freeglut3
+        - freeglut3-dev
+
 script:
   - cmake .
   - make
