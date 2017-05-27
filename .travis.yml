@@ -19,6 +19,7 @@ addons:
         - cmake
         - freeglut3
         - freeglut3-dev
+        - binutils-gold
 
 script:
   - cmake .
