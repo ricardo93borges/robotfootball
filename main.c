@@ -74,7 +74,7 @@ void initCM()
     ballBody = newCircle(cpv(512,350), 8, 1, "small_football.png", moveBola, 0.2, 1);
 
     // ... e um robô de exemplo
-    robotBody = newCircle(cpv(50,350), 20, 5, "ship1.png", moveRobo, 0.2, 0.5);
+    robotBody = newCircle(cpv(812,350), 20, 5, "ship1.png", moveRobo, 0.2, 0.5);
 }
 
 // Exemplo de função de movimentação: move o robô em direção à bola
@@ -108,12 +108,38 @@ void moveRobo(cpBody* body, void* data)
 // Exemplo: move a bola aleatoriamente
 void moveBola(cpBody* body, void* data)
 {
+    // Obtém a posição da bola...
+    cpVect ballPos  = cpBodyGetPosition(ballBody);
+
     // Sorteia um impulso entre -10 e 10, para x e y
     cpVect impulso = cpv(rand()%20-10,rand()%20-10);
     // E aplica na bola
-    cpBodyApplyImpulseAtWorldPoint(body, impulso, cpBodyGetPosition(body));
+    //cpBodyApplyImpulseAtWorldPoint(body, impulso, cpBodyGetPosition(body));
+
+    //Update scores
+    if(ballPos.x <= 50 && ballPos.y >= 350 && ballPos.y <= 385){
+        updateScore(2);
+        resetPositions();//resetar posicoes dos robos para nao atualizar o score varias vezes
+    }else if(ballPos.x >= 975 && ballPos.y >= 350 && ballPos.y <= 385){
+        updateScore(1);
+        resetPositions();
+    }
+
 }
 
+//Reseta posicao dos robos
+void resetPositions(){
+
+}
+
+//Atualiza scores
+void updateScore(int score){
+    if(score == 1){
+        score1++;
+    }else{
+        score2++;
+    }
+}
 // Libera memória ocupada por cada corpo, forma e ambiente
 // Acrescente mais linhas caso necessário
 void freeCM()
