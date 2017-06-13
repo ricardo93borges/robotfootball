@@ -9,6 +9,7 @@
 void moveRobo(cpBody* body, void* data);
 void moveBola(cpBody* body, void* data);
 void moveGoleiroA(cpBody* body, void* data);
+void moveGoleiroB(cpBody* body, void* data);
 
 // Prototipos
 void initCM();
@@ -90,7 +91,7 @@ void initCM()
     defensorA = newCircle(cpv(250,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
     atacanteA = newCircle(cpv(450,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
 
-    goleiroB = newCircle(cpv(970,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
+    goleiroB = newCircle(cpv(970,350), 20, 5, "ship1.png", moveGoleiroB, 0.2, 0.5);
     defensorB = newCircle(cpv(770,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
     atacanteB = newCircle(cpv(570,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
 }
@@ -138,9 +139,73 @@ void moveGoleiroA(cpBody* body, void* data)
             cpVect delta = cpvadd(ballPos,pos);
             delta = cpvmult(cpvnormalize(delta),20);
             cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+        }else if(robotPos.x > 100){
+            cpVect pos = robotPos;
+            pos.x = -robotPos.x;
+            pos.y = -robotPos.y;
+            cpVect delta = cpvadd(ballPos,pos);
+            delta = cpvmult(cpvnormalize(delta),20);
+            delta = cpvneg(delta);
+            cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
         }
     }
 }
+
+void moveGoleiroB(cpBody* body, void* data)
+{
+    cpVect vel = cpBodyGetVelocity(body);
+    vel = cpvclamp(vel, 50);
+    cpBodySetVelocity(body, vel);
+
+    cpVect robotPos = cpBodyGetPosition(body);
+    cpVect ballPos  = cpBodyGetPosition(ballBody);
+
+    if(robotPos.x <= 830){
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        ballPos.x = -ballPos.x;
+        cpVect delta = cpvadd(ballPos,pos);
+        delta = cpvmult(cpvnormalize(delta),20);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+
+    }else if(robotPos.y <= 180){
+        cpVect pos = robotPos;
+        pos.x = robotPos.x;
+        pos.y = robotPos.y;
+        cpVect delta = cpvadd(ballPos,pos);
+        delta = cpvmult(cpvnormalize(delta),20);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+
+    }else if(robotPos.y >= 440){
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        ballPos.y = -ballPos.y;
+        cpVect delta = cpvadd(ballPos,pos);
+        delta = cpvmult(cpvnormalize(delta),20);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+
+    }else{
+        if(ballPos.x > 520){
+            cpVect pos = robotPos;
+            pos.x = -robotPos.x;
+            pos.y = -robotPos.y;
+            cpVect delta = cpvadd(ballPos,pos);
+            delta = cpvmult(cpvnormalize(delta),20);
+            cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+        }else if(robotPos.x < 950){
+            cpVect pos = robotPos;
+            pos.x = -robotPos.x;
+            pos.y = -robotPos.y;
+            cpVect delta = cpvadd(ballPos,pos);
+            delta = cpvmult(cpvnormalize(delta),20);
+            delta = cpvneg(delta);
+            cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+        }
+    }
+}
+
 // Exemplo de função de movimentação: move o robô em direção à bola
 void moveRobo(cpBody* body, void* data)
 {
