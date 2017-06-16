@@ -370,13 +370,18 @@ cpBody* newCircle(cpVect pos, cpFloat radius, cpFloat mass, char* img, bodyMotio
     return newBody;
 }
 
-
-void changeImg(cpBody* body){
+void changeImg(cpBody* body, char* img){
     UserData* ud = cpBodyGetUserData(body);
-    ud->tex = loadImage("soccer_player.png");
+    ud->tex = loadImage(img);
+    ud->radius = 30;
     cpBodySetUserData(body, ud);
 }
 
 void easterEgg(){
-    changeImg(goleiroA);
+    changeImg(goleiroA,"bhead_left.png");
+    changeImg(defensorA,"bhead_left.png");
+    changeImg(atacanteA,"bhead_left.png");
+    changeImg(goleiroB,"bhead_right.png");
+    changeImg(defensorB,"bhead_right.png");
+    changeImg(atacanteB,"bhead_right.png");
 }
