@@ -105,49 +105,23 @@ void moveGoleiroA(cpBody* body, void* data)
     cpVect robotPos = cpBodyGetPosition(body);
     cpVect ballPos  = cpBodyGetPosition(ballBody);
 
-    if(robotPos.x>=100){
+    //Volta para o gol
+    if(robotPos.x >= 130 || robotPos.y >= 460 || robotPos.y <= 260){
         cpVect pos = robotPos;
         pos.x = -robotPos.x;
         pos.y = -robotPos.y;
-        ballPos.x = -ballPos.x;
-        cpVect delta = cpvadd(ballPos,pos);
+        cpVect golPos = cpv(50,350);
+        cpVect delta = cpvadd(golPos,pos);
         delta = cpvmult(cpvnormalize(delta),20);
         cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-
-    }else if(robotPos.y <= 180){
-        cpVect pos = robotPos;
-        pos.x = robotPos.x;
-        pos.y = robotPos.y;
-        cpVect delta = cpvadd(ballPos,pos);
-        delta = cpvmult(cpvnormalize(delta),20);
-        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-
-    }else if(robotPos.y >= 440){
+    //vai atras da bola
+    }else if(ballPos.x < 512){
         cpVect pos = robotPos;
         pos.x = -robotPos.x;
         pos.y = -robotPos.y;
-        ballPos.y = -ballPos.y;
         cpVect delta = cpvadd(ballPos,pos);
         delta = cpvmult(cpvnormalize(delta),20);
         cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-
-    }else{
-        if(ballPos.x < 512){
-            cpVect pos = robotPos;
-            pos.x = -robotPos.x;
-            pos.y = -robotPos.y;
-            cpVect delta = cpvadd(ballPos,pos);
-            delta = cpvmult(cpvnormalize(delta),20);
-            cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-        }else if(robotPos.x > 100){
-            cpVect pos = robotPos;
-            pos.x = -robotPos.x;
-            pos.y = -robotPos.y;
-            cpVect delta = cpvadd(ballPos,pos);
-            delta = cpvmult(cpvnormalize(delta),20);
-            delta = cpvneg(delta);
-            cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-        }
     }
 }
 
@@ -160,49 +134,23 @@ void moveGoleiroB(cpBody* body, void* data)
     cpVect robotPos = cpBodyGetPosition(body);
     cpVect ballPos  = cpBodyGetPosition(ballBody);
 
-    if(robotPos.x <= 830){
-        cpVect pos = robotPos;
-        pos.x = -robotPos.x;
-        pos.y = -robotPos.y;
-        ballPos.x = -ballPos.x;
-        cpVect delta = cpvadd(ballPos,pos);
-        delta = cpvmult(cpvnormalize(delta),20);
-        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-
-    }else if(robotPos.y <= 180){
+    //volta para o gol
+    if(robotPos.x <= 900 || robotPos.y >= 450 || robotPos.y <= 270){
         cpVect pos = robotPos;
         pos.x = robotPos.x;
         pos.y = robotPos.y;
-        cpVect delta = cpvadd(ballPos,pos);
-        delta = cpvmult(cpvnormalize(delta),20);
+        cpVect golPos = cpv(970,350);
+        cpVect delta = cpvadd(golPos,pos);
+        delta = cpvmult(cpvnormalize(delta),10);
         cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-
-    }else if(robotPos.y >= 440){
+    //vai atras da bola
+    }else if(ballPos.x > 520){
         cpVect pos = robotPos;
         pos.x = -robotPos.x;
         pos.y = -robotPos.y;
-        ballPos.y = -ballPos.y;
         cpVect delta = cpvadd(ballPos,pos);
         delta = cpvmult(cpvnormalize(delta),20);
         cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-
-    }else{
-        if(ballPos.x > 520){
-            cpVect pos = robotPos;
-            pos.x = -robotPos.x;
-            pos.y = -robotPos.y;
-            cpVect delta = cpvadd(ballPos,pos);
-            delta = cpvmult(cpvnormalize(delta),20);
-            cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-        }else if(robotPos.x < 950){
-            cpVect pos = robotPos;
-            pos.x = -robotPos.x;
-            pos.y = -robotPos.y;
-            cpVect delta = cpvadd(ballPos,pos);
-            delta = cpvmult(cpvnormalize(delta),20);
-            delta = cpvneg(delta);
-            cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-        }
     }
 }
 
@@ -242,7 +190,7 @@ void moveBola(cpBody* body, void* data)
 
 
     // Sorteia um impulso entre -10 e 10, para x e y
-    cpVect impulso = cpv(rand()%20-10,rand()%20-10);
+    cpVect impulso = cpv(rand()%30-10,rand()%30-10);
     //cpVect impulso = cpv(50,150);
     //impulso = cpvneg(impulso);
     impulso = cpvmult(cpvnormalize(impulso),20);
@@ -253,7 +201,7 @@ void moveBola(cpBody* body, void* data)
     if(ballPos.x <= 50 && ballPos.y >= 350 && ballPos.y <= 385){
         updateScore(2);
         resetPositions();//resetar posicoes dos robos para nao atualizar o score varias vezes
-    }else if(ballPos.x >= 975 && ballPos.y >= 350 && ballPos.y <= 385){
+    }else if(ballPos.x >= 975 && ballPos.y >= 325 && ballPos.y <= 385){
         updateScore(1);
         resetPositions();
     }
