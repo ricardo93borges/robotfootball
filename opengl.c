@@ -40,6 +40,7 @@ cpSpaceDebugDrawOptions drawOptions;
 extern void initCM();
 extern void freeCM();
 extern void restartCM();
+extern void easterEgg();
 
 // Funções da interface gráfica e OpenGL
 void display();
@@ -299,6 +300,9 @@ void keyboard( unsigned char key, int x, int y )
       printf("Gravity: %f\n",grav.y);
       cpSpaceSetGravity(space, grav);
       break;
+    case 'b':
+        easterEgg();
+        break;
   }
   if(dx != 0 || dy != 0) {
       pos = cpBodyGetPosition(robotBody);

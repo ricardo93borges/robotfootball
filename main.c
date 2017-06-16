@@ -8,7 +8,8 @@
 // Funções para movimentação de objetos
 void moveRobo(cpBody* body, void* data);
 void moveBola(cpBody* body, void* data);
-void moveGoleiro(cpBody* body, void* data);
+void moveGoleiroA(cpBody* body, void* data);
+void moveGoleiroB(cpBody* body, void* data);
 
 // Prototipos
 void initCM();
@@ -86,13 +87,71 @@ void initCM()
 
     // ... e um robô de exemplo
     //robotBody = newCircle(cpv(812,350), 20, 5, "ship1.png", moveRobo, 0.2, 0.5);
-    goleiroA = newCircle(cpv(50,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
+    goleiroA = newCircle(cpv(50,350), 20, 5, "ship1.png", moveGoleiroA, 0.2, 0.5);
     defensorA = newCircle(cpv(250,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
-    atacanteA = newCircle(cpv(450,350), 20, 5, "ship1.png", moveRobo, 0.2, 0.5);
+    atacanteA = newCircle(cpv(450,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
 
-    goleiroB = newCircle(cpv(970,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
+    goleiroB = newCircle(cpv(970,350), 20, 5, "ship1.png", moveGoleiroB, 0.2, 0.5);
     defensorB = newCircle(cpv(770,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
     atacanteB = newCircle(cpv(570,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
+}
+
+void moveGoleiroA(cpBody* body, void* data)
+{
+    cpVect vel = cpBodyGetVelocity(body);
+    vel = cpvclamp(vel, 50);
+    cpBodySetVelocity(body, vel);
+
+    cpVect robotPos = cpBodyGetPosition(body);
+    cpVect ballPos  = cpBodyGetPosition(ballBody);
+
+    //Volta para o gol
+    if(robotPos.x >= 130 || robotPos.y >= 460 || robotPos.y <= 260){
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        cpVect golPos = cpv(50,350);
+        cpVect delta = cpvadd(golPos,pos);
+        delta = cpvmult(cpvnormalize(delta),20);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+    //vai atras da bola
+    }else if(ballPos.x < 512){
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        cpVect delta = cpvadd(ballPos,pos);
+        delta = cpvmult(cpvnormalize(delta),20);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+    }
+}
+
+void moveGoleiroB(cpBody* body, void* data)
+{
+    cpVect vel = cpBodyGetVelocity(body);
+    vel = cpvclamp(vel, 50);
+    cpBodySetVelocity(body, vel);
+
+    cpVect robotPos = cpBodyGetPosition(body);
+    cpVect ballPos  = cpBodyGetPosition(ballBody);
+
+    //volta para o gol
+    if(robotPos.x <= 900 || robotPos.y >= 450 || robotPos.y <= 270){
+        cpVect pos = robotPos;
+        pos.x = robotPos.x;
+        pos.y = robotPos.y;
+        cpVect golPos = cpv(970,350);
+        cpVect delta = cpvadd(golPos,pos);
+        delta = cpvmult(cpvnormalize(delta),10);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+    //vai atras da bola
+    }else if(ballPos.x > 520){
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        cpVect delta = cpvadd(ballPos,pos);
+        delta = cpvmult(cpvnormalize(delta),20);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+    }
 }
 
 void moveGoleiro(cpBody* body, void* data){
@@ -154,16 +213,20 @@ void moveBola(cpBody* body, void* data)
     // Obtém a posição da bola...
     cpVect ballPos  = cpBodyGetPosition(ballBody);
 
+
     // Sorteia um impulso entre -10 e 10, para x e y
     cpVect impulso = cpv(rand()%20-10,rand()%20-10);
+    //cpVect impulso = cpv(50,150);
+    //impulso = cpvneg(impulso);
+    impulso = cpvmult(cpvnormalize(impulso),20);
     // E aplica na bola
-    //cpBodyApplyImpulseAtWorldPoint(body, impulso, cpBodyGetPosition(body));
+    cpBodyApplyImpulseAtWorldPoint(body, impulso, cpBodyGetPosition(body));
 
     //Update scores
     if(ballPos.x <= 50 && ballPos.y >= 350 && ballPos.y <= 385){
         updateScore(2);
         resetPositions();//resetar posicoes dos robos para nao atualizar o score varias vezes
-    }else if(ballPos.x >= 975 && ballPos.y >= 350 && ballPos.y <= 385){
+    }else if(ballPos.x >= 975 && ballPos.y >= 325 && ballPos.y <= 385){
         updateScore(1);
         resetPositions();
     }
@@ -330,4 +393,20 @@ cpBody* newCircle(cpVect pos, cpFloat radius, cpFloat mass, char* img, bodyMotio
     cpBodySetUserData(newBody, newUserData);
     printf("newCircle: loaded img %s\n", img);
     return newBody;
+}
+
+void changeImg(cpBody* body, char* img){
+    UserData* ud = cpBodyGetUserData(body);
+    ud->tex = loadImage(img);
+    ud->radius = 30;
+    cpBodySetUserData(body, ud);
+}
+
+void easterEgg(){
+    changeImg(goleiroA,"bhead_left.png");
+    changeImg(defensorA,"bhead_left.png");
+    changeImg(atacanteA,"bhead_left.png");
+    changeImg(goleiroB,"bhead_right.png");
+    changeImg(defensorB,"bhead_right.png");
+    changeImg(atacanteB,"bhead_right.png");
 }
