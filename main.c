@@ -190,7 +190,7 @@ void moveBola(cpBody* body, void* data)
 
 
     // Sorteia um impulso entre -10 e 10, para x e y
-    cpVect impulso = cpv(rand()%30-10,rand()%30-10);
+    cpVect impulso = cpv(rand()%20-10,rand()%20-10);
     //cpVect impulso = cpv(50,150);
     //impulso = cpvneg(impulso);
     impulso = cpvmult(cpvnormalize(impulso),20);
@@ -368,4 +368,15 @@ cpBody* newCircle(cpVect pos, cpFloat radius, cpFloat mass, char* img, bodyMotio
     cpBodySetUserData(newBody, newUserData);
     printf("newCircle: loaded img %s\n", img);
     return newBody;
+}
+
+
+void changeImg(cpBody* body){
+    UserData* ud = cpBodyGetUserData(body);
+    ud->tex = loadImage("soccer_player.png");
+    cpBodySetUserData(body, ud);
+}
+
+void easterEgg(){
+    changeImg(goleiroA);
 }
