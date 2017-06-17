@@ -10,6 +10,9 @@ void moveRobo(cpBody* body, void* data);
 void moveBola(cpBody* body, void* data);
 void moveGoleiroA(cpBody* body, void* data);
 void moveGoleiroB(cpBody* body, void* data);
+void moveDefensorA(cpBody* body, void* data);
+void moveDefensorB(cpBody* body, void* data);
+
 
 // Prototipos
 void initCM();
@@ -88,11 +91,11 @@ void initCM()
     // ... e um robô de exemplo
     //robotBody = newCircle(cpv(812,350), 20, 5, "ship1.png", moveRobo, 0.2, 0.5);
     goleiroA = newCircle(cpv(50,350), 20, 5, "ship1.png", moveGoleiroA, 0.2, 0.5);
-    defensorA = newCircle(cpv(250,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
+    defensorA = newCircle(cpv(250,350), 20, 5, "ship1.png", moveDefensorA, 0.2, 0.5);
     atacanteA = newCircle(cpv(450,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
 
     goleiroB = newCircle(cpv(970,350), 20, 5, "ship1.png", moveGoleiroB, 0.2, 0.5);
-    defensorB = newCircle(cpv(770,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
+    defensorB = newCircle(cpv(770,350), 20, 5, "ship1.png", moveDefensorB, 0.2, 0.5);
     atacanteB = newCircle(cpv(570,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
 }
 
@@ -138,7 +141,7 @@ void moveGoleiroB(cpBody* body, void* data)
     if(robotPos.x <= 900 || robotPos.y >= 450 || robotPos.y <= 270){
         cpVect pos = robotPos;
         pos.x = robotPos.x;
-        pos.y = robotPos.y;
+        pos.y = -robotPos.y;
         cpVect golPos = cpv(970,350);
         cpVect delta = cpvadd(golPos,pos);
         delta = cpvmult(cpvnormalize(delta),10);
@@ -152,60 +155,70 @@ void moveGoleiroB(cpBody* body, void* data)
         delta = cpvmult(cpvnormalize(delta),20);
         cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
     }
+
 }
 
-void moveGoleiro(cpBody* body, void* data){
-
-    cpVect vel = cpBodyGetVelocity(body);
-//    printf("vel: %f %f", vel.x,vel.y);
-
-    // Limita o vetor em 50 unidades
-    vel = cpvclamp(vel, 50);
-    // E seta novamente a velocidade do corpo
-    cpBodySetVelocity(body, vel);
-
-    // Obtém a posição do robô e da bola...
-    cpVect robotPos = cpBodyGetPosition(body);
-    cpVect ballPos  = cpBodyGetPosition(ballBody);
-
-    // Calcula um vetor do robô à bola (DELTA = B - R)
-    cpVect pos = robotPos;
-
-    pos.y = -robotPos.y;
-    cpVect delta = cpvadd(ballPos,pos);
-
-    // Limita o impulso em 20 unidades
-    delta = cpvmult(cpvnormalize(delta),20);
-    // Finalmente, aplica impulso no robô
-    cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
-}
-// Exemplo de função de movimentação: move o robô em direção à bola
-void moveRobo(cpBody* body, void* data)
+void moveDefensorA(cpBody* body, void* data)
 {
-    // Veja como obter e limitar a velocidade do robô...
     cpVect vel = cpBodyGetVelocity(body);
-//    printf("vel: %f %f", vel.x,vel.y);
-
-    // Limita o vetor em 50 unidades
     vel = cpvclamp(vel, 50);
-    // E seta novamente a velocidade do corpo
     cpBodySetVelocity(body, vel);
 
-    // Obtém a posição do robô e da bola...
     cpVect robotPos = cpBodyGetPosition(body);
     cpVect ballPos  = cpBodyGetPosition(ballBody);
 
-    // Calcula um vetor do robô à bola (DELTA = B - R)
-    cpVect pos = robotPos;
-    pos.x = -robotPos.x;
-    pos.y = -robotPos.y;
-    cpVect delta = cpvadd(ballPos,pos);
+    //volta para a posicao de defensor
+    if(ballPos.x <  500){
+        printf("%f", ballPos.x);
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        cpVect delta = cpvadd(ballPos,pos);
+        delta = cpvmult(cpvnormalize(delta),20);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+    } else  if(robotPos.x <= 200 || robotPos.y >= 45 || robotPos.y <= 665){
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        cpVect golPos = cpv(250,350);
+        cpVect delta = cpvadd(golPos,pos);
+        delta = cpvmult(cpvnormalize(delta),10);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+    //vai atras da bola
+    }
 
-    // Limita o impulso em 20 unidades
-    delta = cpvmult(cpvnormalize(delta),20);
-    // Finalmente, aplica impulso no robô
-    cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
 }
+
+void moveDefensorB(cpBody* body, void* data)
+{
+     cpVect vel = cpBodyGetVelocity(body);
+    vel = cpvclamp(vel, 50);
+    cpBodySetVelocity(body, vel);
+
+    cpVect robotPos = cpBodyGetPosition(body);
+    cpVect ballPos  = cpBodyGetPosition(ballBody);
+
+    //volta para a posicao de defensor
+    if(ballPos.x >  515){
+        printf("%f", ballPos.x);
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        cpVect delta = cpvadd(ballPos,pos);
+        delta = cpvmult(cpvnormalize(delta),20);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+    } else  if(robotPos.x >= 830 || robotPos.y >= 45|| robotPos.y <= 665 ){
+        cpVect pos = robotPos;
+        pos.x = -robotPos.x;
+        pos.y = -robotPos.y;
+        cpVect golPos = cpv(830,355);
+        cpVect delta = cpvadd(golPos,pos);
+        delta = cpvmult(cpvnormalize(delta),10);
+        cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+    //vai atras da bola
+    }
+}
+
 
 // Exemplo: move a bola aleatoriamente
 void moveBola(cpBody* body, void* data)
