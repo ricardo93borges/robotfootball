@@ -1,6 +1,6 @@
 #include <math.h>
-#include <chipmunk.h>
-#include <SOIL.h>
+#include "chipmunk.h"
+#include "SOIL.h"
 
 // Rotinas para acesso da OpenGL
 #include "opengl.h"
@@ -8,10 +8,21 @@
 // Funções para movimentação de objetos
 void moveRobo(cpBody* body, void* data);
 void moveBola(cpBody* body, void* data);
+
 void moveGoleiroA(cpBody* body, void* data);
 void moveGoleiroB(cpBody* body, void* data);
-void moveDefensorA(cpBody* body, void* data);
-void moveDefensorB(cpBody* body, void* data);
+
+void moveDefensorDireitaA(cpBody* body, void* data);
+void moveDefensorDireitaB(cpBody* body, void* data);
+
+void moveDefensorEsquerdaA(cpBody* body, void* data);
+void moveDefensorEsquerdaB(cpBody* body, void* data);
+
+void moveAtacanteDireitaA(cpBody* body, void* data);
+void moveAtacanteDireitaB(cpBody* body, void* data);
+
+void moveAtacanteEsquerdaA(cpBody* body, void* data);
+void moveAtacanteEsquerdaB(cpBody* body, void* data);
 
 
 // Prototipos
@@ -45,13 +56,17 @@ cpBody* robotBody;
 
 //Robos do time A
 cpBody* goleiroA;
-cpBody* atacanteA;
-cpBody* defensorA;
+cpBody* defensorDireitaA;
+cpBody* defensorEsquerdaA;
+cpBody* atacanteDireitaA;
+cpBody* atacanteEsquerdaA;
 
 //Robos do time B
 cpBody* goleiroB;
-cpBody* atacanteB;
-cpBody* defensorB;
+cpBody* defensorDireitaB;
+cpBody* defensorEsquerdaB;
+cpBody* atacanteDireitaB;
+cpBody* atacanteEsquerdaB;
 
 // Cada passo de simulação é 1/60 seg.
 cpFloat timeStep = 1.0/60.0;
@@ -88,16 +103,67 @@ void initCM()
     //   - coeficiente de elasticidade
     ballBody = newCircle(cpv(512,350), 8, 1, "small_football.png", moveBola, 0.2, 1);
 
-    // ... e um robô de exemplo
-    //robotBody = newCircle(cpv(812,350), 20, 5, "ship1.png", moveRobo, 0.2, 0.5);
-    goleiroA = newCircle(cpv(50,350), 20, 5, "ship1.png", moveGoleiroA, 0.2, 0.5);
-    defensorA = newCircle(cpv(250,350), 20, 5, "ship1.png", moveDefensorA, 0.2, 0.5);
-    atacanteA = newCircle(cpv(450,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
+    goleiroA = newCircle(cpv(50,350), 20, 50, "ship1.png", moveGoleiroA, 0.2, 0.5);
+    defensorEsquerdaA = newCircle(cpv(280,200), 20, 50, "ship1.png", NULL, 0.2, 0.5);
+    defensorDireitaA = newCircle(cpv(280,500), 20, 50, "ship1.png", NULL, 0.2, 0.5);
+    atacanteDireitaA = newCircle(cpv(490,335), 20, 50, "ship1.png", NULL, 0.2, 0.5);
+    atacanteEsquerdaA = newCircle(cpv(490, 385), 20, 50, "ship1.png", NULL, 0.2, 0.5);
 
-    goleiroB = newCircle(cpv(970,350), 20, 5, "ship1.png", moveGoleiroB, 0.2, 0.5);
-    defensorB = newCircle(cpv(770,350), 20, 5, "ship1.png", moveDefensorB, 0.2, 0.5);
-    atacanteB = newCircle(cpv(570,350), 20, 5, "ship1.png", NULL, 0.2, 0.5);
+    goleiroB = newCircle(cpv(970,350), 20, 50, "ship2.png", moveGoleiroB, 0.2, 0.5);
+    defensorEsquerdaB = newCircle(cpv(770,200), 20, 50, "ship2.png", NULL, 0.2, 0.5);
+    defensorDireitaB = newCircle(cpv(770,500), 20, 50, "ship2.png", NULL, 0.2, 0.5);
+    atacanteDireitaB = newCircle(cpv(530,335), 20, 50, "ship2.png", NULL, 0.2, 0.5);
+    atacanteEsquerdaB = newCircle(cpv(530,385), 20, 50, "ship2.png", NULL, 0.2, 0.5);
 }
+
+
+//Reseta posicao dos robos
+void resetPositions(){
+    cpVect pos = cpBodyGetPosition(ballBody);
+    pos.x = 512;
+    pos.y = 350;
+    cpBodySetPosition(ballBody, pos);
+    
+    pos = cpBodyGetPosition(goleiroA);
+    pos.x = 50;
+    pos.y = 350;
+    cpBodySetPosition(goleiroA, pos);
+    
+    pos = cpBodyGetPosition(atacanteDireitaA);
+    pos.x = 450;
+    pos.y = 350;
+    cpBodySetPosition(atacanteDireitaA, pos);
+    
+    pos = cpBodyGetPosition(defensorDireitaA);
+    pos.x = 250;
+    pos.y = 350;
+    cpBodySetPosition(defensorDireitaA, pos);
+    
+    pos = cpBodyGetPosition(goleiroB);
+    pos.x = 970;
+    pos.y = 350;
+    cpBodySetPosition(goleiroB, pos);
+    
+    pos = cpBodyGetPosition(defensorDireitaB);
+    pos.x = 770;
+    pos.y = 350;
+    cpBodySetPosition(defensorDireitaB, pos);
+    
+    pos = cpBodyGetPosition(atacanteDireitaB);
+    pos.x = 570;
+    pos.y = 350;
+    cpBodySetPosition(atacanteDireitaB, pos);
+}
+
+//Atualiza scores
+void updateScore(int score){
+    if(score == 1){
+        score1++;
+    }else{
+        score2++;
+    }
+}
+
 
 void moveGoleiroA(cpBody* body, void* data)
 {
@@ -158,7 +224,7 @@ void moveGoleiroB(cpBody* body, void* data)
 
 }
 
-void moveDefensorA(cpBody* body, void* data)
+void moveDefensorDireitaA(cpBody* body, void* data)
 {
     cpVect vel = cpBodyGetVelocity(body);
     vel = cpvclamp(vel, 50);
@@ -189,7 +255,7 @@ void moveDefensorA(cpBody* body, void* data)
 
 }
 
-void moveDefensorB(cpBody* body, void* data)
+void moveDefensorDireitaB(cpBody* body, void* data)
 {
      cpVect vel = cpBodyGetVelocity(body);
     vel = cpvclamp(vel, 50);
@@ -200,7 +266,6 @@ void moveDefensorB(cpBody* body, void* data)
 
     //volta para a posicao de defensor
     if(ballPos.x >  515){
-        printf("%f", ballPos.x);
         cpVect pos = robotPos;
         pos.x = -robotPos.x;
         pos.y = -robotPos.y;
@@ -244,53 +309,6 @@ void moveBola(cpBody* body, void* data)
         resetPositions();
     }
 }
-
-//Reseta posicao dos robos
-void resetPositions(){
-    cpVect pos = cpBodyGetPosition(ballBody);
-    pos.x = 512;
-    pos.y = 350;
-    cpBodySetPosition(ballBody, pos);
-
-    pos = cpBodyGetPosition(goleiroA);
-    pos.x = 50;
-    pos.y = 350;
-    cpBodySetPosition(goleiroA, pos);
-
-    pos = cpBodyGetPosition(atacanteA);
-    pos.x = 450;
-    pos.y = 350;
-    cpBodySetPosition(atacanteA, pos);
-
-    pos = cpBodyGetPosition(defensorA);
-    pos.x = 250;
-    pos.y = 350;
-    cpBodySetPosition(defensorA, pos);
-
-    pos = cpBodyGetPosition(goleiroB);
-    pos.x = 970;
-    pos.y = 350;
-    cpBodySetPosition(goleiroB, pos);
-
-    pos = cpBodyGetPosition(defensorB);
-    pos.x = 770;
-    pos.y = 350;
-    cpBodySetPosition(defensorB, pos);
-
-    pos = cpBodyGetPosition(atacanteB);
-    pos.x = 570;
-    pos.y = 350;
-    cpBodySetPosition(atacanteB, pos);
-}
-
-//Atualiza scores
-void updateScore(int score){
-    if(score == 1){
-        score1++;
-    }else{
-        score2++;
-    }
-}
 // Libera memória ocupada por cada corpo, forma e ambiente
 // Acrescente mais linhas caso necessário
 void freeCM()
@@ -308,26 +326,42 @@ void freeCM()
     cpShapeFree(ud->shape);
     cpBodyFree(goleiroA);
 
-    ud = cpBodyGetUserData(defensorA);
+    ud = cpBodyGetUserData(defensorDireitaA);
     cpShapeFree(ud->shape);
-    cpBodyFree(defensorA);
+    cpBodyFree(defensorDireitaA);
 
-    ud = cpBodyGetUserData(atacanteA);
+    ud = cpBodyGetUserData(defensorEsquerdaA);
     cpShapeFree(ud->shape);
-    cpBodyFree(atacanteA);
+    cpBodyFree(defensorEsquerdaA);
+    
+    ud = cpBodyGetUserData(atacanteDireitaA);
+    cpShapeFree(ud->shape);
+    cpBodyFree(atacanteDireitaA);
 
+    ud = cpBodyGetUserData(atacanteEsquerdaA);
+    cpShapeFree(ud->shape);
+    cpBodyFree(atacanteEsquerdaA);
+    
     ud = cpBodyGetUserData(goleiroB);
     cpShapeFree(ud->shape);
     cpBodyFree(goleiroB);
 
-    ud = cpBodyGetUserData(defensorB);
+    ud = cpBodyGetUserData(defensorDireitaB);
     cpShapeFree(ud->shape);
-    cpBodyFree(defensorB);
+    cpBodyFree(defensorDireitaB);
 
-    ud = cpBodyGetUserData(atacanteB);
+    ud = cpBodyGetUserData(defensorEsquerdaB);
     cpShapeFree(ud->shape);
-    cpBodyFree(atacanteB);
+    cpBodyFree(defensorEsquerdaB);
+    
+    ud = cpBodyGetUserData(atacanteDireitaB);
+    cpShapeFree(ud->shape);
+    cpBodyFree(atacanteDireitaB);
 
+    ud = cpBodyGetUserData(atacanteEsquerdaB);
+    cpShapeFree(ud->shape);
+    cpBodyFree(atacanteEsquerdaB);
+    
     cpShapeFree(leftWall);
     cpShapeFree(rightWall);
     cpShapeFree(bottomWall);
@@ -417,9 +451,9 @@ void changeImg(cpBody* body, char* img){
 
 void easterEgg(){
     changeImg(goleiroA,"bhead_left.png");
-    changeImg(defensorA,"bhead_left.png");
-    changeImg(atacanteA,"bhead_left.png");
+    changeImg(defensorDireitaA,"bhead_left.png");
+    changeImg(atacanteDireitaA,"bhead_left.png");
     changeImg(goleiroB,"bhead_right.png");
-    changeImg(defensorB,"bhead_right.png");
-    changeImg(atacanteB,"bhead_right.png");
+    changeImg(defensorDireitaB,"bhead_right.png");
+    changeImg(atacanteDireitaB,"bhead_right.png");
 }
