@@ -103,17 +103,17 @@ void initCM()
     //   - coeficiente de elasticidade
     ballBody = newCircle(cpv(512,350), 8, 1, "small_football.png", moveBola, 0.2, 1);
 
-    goleiroA = newCircle(cpv(50,350), 20, 50, "ship1.png", moveGoleiroA, 0.2, 0.5);
-    defensorEsquerdaA = newCircle(cpv(280,200), 20, 50, "ship1.png", NULL, 0.2, 0.5);
-    defensorDireitaA = newCircle(cpv(280,500), 20, 50, "ship1.png", NULL, 0.2, 0.5);
-    atacanteDireitaA = newCircle(cpv(490,335), 20, 50, "ship1.png", NULL, 0.2, 0.5);
-    atacanteEsquerdaA = newCircle(cpv(490, 385), 20, 50, "ship1.png", NULL, 0.2, 0.5);
+    goleiroA = newCircle(cpv(50,350), 20, 10, "ship1.png", moveGoleiroA, 0.2, 0.5);
+    defensorEsquerdaA = newCircle(cpv(280,200), 20, 10, "ship1.png", moveDefensorEsquerdaA, 0.2, 0.5);
+    defensorDireitaA = newCircle(cpv(280,500), 20, 10, "ship1.png", moveDefensorDireitaA, 0.2, 0.5);
+    atacanteDireitaA = newCircle(cpv(490,335), 20, 10, "ship1.png", moveAtacanteDireitaA, 0.2, 0.5);
+    atacanteEsquerdaA = newCircle(cpv(490, 385), 20, 10, "ship1.png", moveAtacanteEsquerdaA, 0.2, 0.5);
 
     goleiroB = newCircle(cpv(970,350), 20, 50, "ship2.png", moveGoleiroB, 0.2, 0.5);
-    defensorEsquerdaB = newCircle(cpv(770,200), 20, 50, "ship2.png", NULL, 0.2, 0.5);
-    defensorDireitaB = newCircle(cpv(770,500), 20, 50, "ship2.png", NULL, 0.2, 0.5);
-    atacanteDireitaB = newCircle(cpv(530,335), 20, 50, "ship2.png", NULL, 0.2, 0.5);
-    atacanteEsquerdaB = newCircle(cpv(530,385), 20, 50, "ship2.png", NULL, 0.2, 0.5);
+    defensorEsquerdaB = newCircle(cpv(770,200), 20, 10, "ship2.png", moveDefensorEsquerdaB, 0.2, 0.5);
+    defensorDireitaB = newCircle(cpv(770,500), 20, 10, "ship2.png", moveDefensorDireitaB, 0.2, 0.5);
+    atacanteDireitaB = newCircle(cpv(530,335), 20, 10, "ship2.png", moveAtacanteDireitaB, 0.2, 0.5);
+    atacanteEsquerdaB = newCircle(cpv(530,385), 20, 10, "ship2.png", moveAtacanteEsquerdaB, 0.2, 0.5);
 }
 
 
@@ -123,32 +123,32 @@ void resetPositions(){
     pos.x = 512;
     pos.y = 350;
     cpBodySetPosition(ballBody, pos);
-    
+
     pos = cpBodyGetPosition(goleiroA);
     pos.x = 50;
     pos.y = 350;
     cpBodySetPosition(goleiroA, pos);
-    
+
     pos = cpBodyGetPosition(atacanteDireitaA);
     pos.x = 450;
     pos.y = 350;
     cpBodySetPosition(atacanteDireitaA, pos);
-    
+
     pos = cpBodyGetPosition(defensorDireitaA);
     pos.x = 250;
     pos.y = 350;
     cpBodySetPosition(defensorDireitaA, pos);
-    
+
     pos = cpBodyGetPosition(goleiroB);
     pos.x = 970;
     pos.y = 350;
     cpBodySetPosition(goleiroB, pos);
-    
+
     pos = cpBodyGetPosition(defensorDireitaB);
     pos.x = 770;
     pos.y = 350;
     cpBodySetPosition(defensorDireitaB, pos);
-    
+
     pos = cpBodyGetPosition(atacanteDireitaB);
     pos.x = 570;
     pos.y = 350;
@@ -168,7 +168,7 @@ void updateScore(int score){
 void moveGoleiroA(cpBody* body, void* data)
 {
     cpVect vel = cpBodyGetVelocity(body);
-    vel = cpvclamp(vel, 50);
+    vel = cpvclamp(vel, 500);
     cpBodySetVelocity(body, vel);
 
     cpVect robotPos = cpBodyGetPosition(body);
@@ -231,11 +231,10 @@ void moveDefensorDireitaA(cpBody* body, void* data)
     cpBodySetVelocity(body, vel);
 
     cpVect robotPos = cpBodyGetPosition(body);
-    cpVect ballPos  = cpBodyGetPosition(ballBody);
+    cpVect ballPos  = cpBodyGetPosition(atacanteEsquerdaB);
 
     //volta para a posicao de defensor
     if(ballPos.x <  500){
-        printf("%f", ballPos.x);
         cpVect pos = robotPos;
         pos.x = -robotPos.x;
         pos.y = -robotPos.y;
@@ -257,12 +256,12 @@ void moveDefensorDireitaA(cpBody* body, void* data)
 
 void moveDefensorDireitaB(cpBody* body, void* data)
 {
-     cpVect vel = cpBodyGetVelocity(body);
+    cpVect vel = cpBodyGetVelocity(body);
     vel = cpvclamp(vel, 50);
     cpBodySetVelocity(body, vel);
 
     cpVect robotPos = cpBodyGetPosition(body);
-    cpVect ballPos  = cpBodyGetPosition(ballBody);
+    cpVect ballPos  = cpBodyGetPosition(defensorEsquerdaA);
 
     //volta para a posicao de defensor
     if(ballPos.x >  515){
@@ -284,6 +283,48 @@ void moveDefensorDireitaB(cpBody* body, void* data)
     }
 }
 
+void moveDefensorEsquerdaA(cpBody* body, void* data)
+{
+
+}
+
+void moveDefensorEsquerdaB(cpBody* body, void* data)
+{
+
+}
+
+void moveAtacanteDireitaA(cpBody* body, void* data)
+{
+    cpVect vel = cpBodyGetVelocity(body);
+    vel = cpvclamp(vel, 50);
+    cpBodySetVelocity(body, vel);
+
+    cpVect robotPos = cpBodyGetPosition(body);
+    cpVect ballPos  = cpBodyGetPosition(defensorEsquerdaA);
+    cpVect pos = robotPos;
+    pos.x = -robotPos.x;
+    pos.y = -robotPos.y;
+    cpVect golPos = cpv(830,355);
+    cpVect delta = cpvadd(golPos,pos);
+    delta = cpvmult(cpvnormalize(delta),10);
+    cpBodyApplyImpulseAtWorldPoint(body, delta, robotPos);
+}
+
+void moveAtacanteDireitaB(cpBody* body, void* data)
+{
+
+
+}
+
+void moveAtacanteEsquerdaA(cpBody* body, void* data)
+{
+
+}
+
+void moveAtacanteEsquerdaB(cpBody* body, void* data)
+{
+
+}
 
 // Exemplo: move a bola aleatoriamente
 void moveBola(cpBody* body, void* data)
@@ -333,7 +374,7 @@ void freeCM()
     ud = cpBodyGetUserData(defensorEsquerdaA);
     cpShapeFree(ud->shape);
     cpBodyFree(defensorEsquerdaA);
-    
+
     ud = cpBodyGetUserData(atacanteDireitaA);
     cpShapeFree(ud->shape);
     cpBodyFree(atacanteDireitaA);
@@ -341,7 +382,7 @@ void freeCM()
     ud = cpBodyGetUserData(atacanteEsquerdaA);
     cpShapeFree(ud->shape);
     cpBodyFree(atacanteEsquerdaA);
-    
+
     ud = cpBodyGetUserData(goleiroB);
     cpShapeFree(ud->shape);
     cpBodyFree(goleiroB);
@@ -353,7 +394,7 @@ void freeCM()
     ud = cpBodyGetUserData(defensorEsquerdaB);
     cpShapeFree(ud->shape);
     cpBodyFree(defensorEsquerdaB);
-    
+
     ud = cpBodyGetUserData(atacanteDireitaB);
     cpShapeFree(ud->shape);
     cpBodyFree(atacanteDireitaB);
@@ -361,7 +402,7 @@ void freeCM()
     ud = cpBodyGetUserData(atacanteEsquerdaB);
     cpShapeFree(ud->shape);
     cpBodyFree(atacanteEsquerdaB);
-    
+
     cpShapeFree(leftWall);
     cpShapeFree(rightWall);
     cpShapeFree(bottomWall);
